@@ -36,6 +36,7 @@ python ingest.py
 Download from: https://ollama.com/download
 
 ## 4. Pull the model
+Note that Mistral runs fine on 8GB RAM
 ```bash
 ollama pull mistral
 ```
