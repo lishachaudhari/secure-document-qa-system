@@ -33,6 +33,7 @@ This system solves that through:
 ---
 
 # System Architecture
+<img width="2816" height="1536" alt="Architecture Image" src="https://github.com/user-attachments/assets/fdc22250-7c52-4d1d-86a7-91341efb31cd" />
 
 
 
@@ -111,24 +112,11 @@ This system solves that through:
 
 ### ✅ Section-Based (Paragraph-Level) Chunking
 
-The system uses a **section-based chunking strategy**, splitting documents at natural paragraph boundaries to preserve meaningful context.
-
-### 📌 Key Points
-- Splits text at paragraph breaks  
-- Filters out very small or noisy sections  
-- Creates **non-overlapping** chunks  
-- Ensures each chunk is context-rich and usable  
+The system uses a **paragraph-level chunking approach**, where document text is split based on natural paragraph or section boundaries. Each paragraph is treated as an individual chunk, and very small or irrelevant sections are filtered out to ensure only meaningful content is stored. This results in clean, non-overlapping chunks that preserve the original structure of the document.
 
 ### 🎯 Why This Approach
-- Aligns well with structured policy documents  
-- Improves retrieval accuracy  
-- Lightweight and efficient for local systems  
 
-### ⚠️ Limitations
-- Cannot capture cross-section context  
-- Rule-based (no semantic understanding)  
-
-### 📝 Summary
+This strategy works well for policy and financial documents, which are typically structured into sections and paragraphs. By preserving this structure, each chunk retains enough context to answer queries effectively. It also improves retrieval accuracy while keeping the system lightweight and efficient, which is important for a fully local setup with limited computational resources.
 
 ---
 # 🚀 Installation & Setup
@@ -154,6 +142,7 @@ ollama pull mistral
 streamlit run app.py
 ```
 # How It Works (End-to-End)
+<img width="2816" height="1536" alt="Workflow image" src="https://github.com/user-attachments/assets/2dbfd137-e731-4f96-9f80-a8c78a896708" />
 
 # Limitations
 - Weak performance on complex multi-document reasoning
