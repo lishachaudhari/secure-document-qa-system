@@ -129,7 +129,7 @@ The system uses a **section-based chunking strategy**, splitting documents at na
 - Rule-based (no semantic understanding)  
 
 ### 📝 Summary
-A simple and effective approach that balances performance and accuracy for document-based Q&A systems.
+
 ---
 # 🚀 Installation & Setup
 
@@ -137,16 +137,22 @@ A simple and effective approach that balances performance and accuracy for docum
 ```bash
 git clone https://github.com/<your-username>/<repo-name>.git
 cd <repo-name>
+```
 ## 2. Install dependencies
 ```bash
 pip install -r requirements.txt
+```
 ## 3. Install Ollama
 Download from: https://ollama.com/download
-## 4. Pull the model
-```ollama pull mistral
-## 5. Run the application
-```streamlit run app.py
 
+## 4. Pull the model
+```bash
+ollama pull mistral
+```
+## 5. Run the application
+```bash
+streamlit run app.py
+```
 # 📂 Folder Structure
 .
 ├── app.py
