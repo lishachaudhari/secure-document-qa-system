@@ -35,11 +35,18 @@ This system solves that through:
 # System Architecture
 <img width="2816" height="1536" alt="Architecture Image" src="https://github.com/user-attachments/assets/fdc22250-7c52-4d1d-86a7-91341efb31cd" />
 
-
+When the user uploads documents, the system reads them, splits them into paragraphs, converts each paragraph into embeddings, and stores them in ChromaDB. When a query arrives, we embed the query, find the top-k similar chunks, and send them + the question to the local Mistral model to generate an answer with citations
 
 ---
 
 # 💡 Design Decisions
+
+## Why This Architecture Meets NBFC Compliance
+- Ollama LLM runs fully offline, ensuring no policy or customer data leaves the device.
+- ChromaDB stores vectors locally on disk, satisfying internal data residency rules.
+- Sentence Transformer embeddings run offline, with no API calls.
+- Streamlit UI does not transmit data externally, all operations occur inside local environment.
+---
 ## 🤖 LLM Selection
 
 ### ✅ Chosen Model: **Mistral (via Ollama)**
@@ -118,6 +125,21 @@ The system uses a **paragraph-level chunking approach**, where document text is 
 
 This strategy works well for policy and financial documents, which are typically structured into sections and paragraphs. By preserving this structure, each chunk retains enough context to answer queries effectively. It also improves retrieval accuracy while keeping the system lightweight and efficient, which is important for a fully local setup with limited computational resources.
 
+#### Why Not Fixed Token Size?
+Fixed-size chunks (200–500 tokens) were rejected because financial policy documents have structured paragraphs, definitions, and tables. Cutting mid-paragraph reduces semantic meaning and introduces hallucinations.
+
+#### Why No Overlap?
+Overlapping chunks increase storage and latency. Policy documents are already cleanly structured, so paragraph-level boundaries provide enough context without overlap.
+---
+### Retrieval Alternatives Considered
+| Approach                          | Why Not Used                                                           |
+| --------------------------------- | ---------------------------------------------------------------------- |
+| Fixed-size token chunking         | Breaks policy paragraphs and reduces context quality                   |
+| Overlapping chunks                | Higher latency + more disk usage with minimal accuracy gain            |
+| Hybrid search (BM25 + embeddings) | Requires additional infra; unnecessary for structured policy documents |
+| Re-ranking model                  | Too heavy for fully local CPU-only deployment                          |
+| Summarized chunks                 | Risk of losing compliance-critical details                             |
+
 ---
 # 🚀 Installation & Setup
 
@@ -144,55 +166,37 @@ streamlit run app.py
 # How It Works (End-to-End)
 <img width="2816" height="1536" alt="Workflow image" src="https://github.com/user-attachments/assets/2dbfd137-e731-4f96-9f80-a8c78a896708" />
 
+## 🖥️ Application UI (Example)
+
+Here is a sample screenshot of the Streamlit interface showing the upload area, query box, and answer display.
+
 # Limitations
 - Weak performance on complex multi-document reasoning
 - No reranking model
 - Limited handling of unstructured PDFs
 - UI does not highlight exact answer spans
-# Future Improvements
-Semantic chunking
+- Struggles with questions requiring synthesis across multiple documents
+(e.g., combining KYC and Underwriting guidelines in one answer)
+- Fails on scanned/image-based PDFs
+because no OCR pipeline is implemented.
 
-📘 Learning Journal (7-Day Journey)
-Day 1
+# ✅ What Works Well
+- Accurate for section-specific and definition-based queries
+  (e.g., “What are KYC requirements?” or “What is the loan approval limit?”)
+- Strong hallucination control
+  The model is constrained to retrieved chunks, reducing generation of unsupported answers
+- Reliable performance on structured policy documents
+  Paragraph-based chunking preserves context effectively
+- Fully local and NBFC-compliant architecture
+  No external API calls, ensuring data privacy
+- Clean and intuitive UI for non-technical users
 
-Understood the problem, designed architecture, explored LLMs (Phi, LLaMA3, Mistral), selected embeddings and vector DB.
-
-Day 2
-
-Built ingestion pipeline, tested chunking strategies, improved chunk quality.
-
-Day 3
-
-Integrated LLM using Ollama, handled RAM constraints, designed strict anti-hallucination prompt.
-
-Day 4
-
-Tested system end-to-end, fixed incomplete answers, improved retrieval & filtering.
-
-Day 5
-
-Added Excel & PDF improvements, tested across various document types.
-
-Day 6
-
-Handled edge cases, added rejection logic, improved reliability and consistency.
-
-🔧 Key Challenges
-Chunk quality → improved filtering
-RAM limitations → optimized model choice
-Hallucination → strict prompting + rejection logic
-Retrieval accuracy → distance thresholds + filtering
-🔁 One Decision Reversed
-
-Initially: Used basic chunking → resulted in poor quality retrieval
-Revised: Switched to filtered, section-based chunking → major accuracy improvement
-
-✅ What Works Well
-Accurate policy-based answers
-Strong hallucination control
-Fully local system (NBFC-compliant)
-Clean and intuitive UI
-⚠️ What Doesn’t Work Well
-Complex multi-document reasoning
-Weak handling of unstructured PDFs
-No reranking to boost retrieval precision
+# ❌ What Doesn’t Work Well
+- Struggles with multi-document reasoning
+  Cannot reliably combine information across multiple policies in a single answer
+- Weak performance on unstructured or scanned PDFs
+  No OCR or layout-aware parsing implemented
+- No re-ranking step
+  Retrieved chunks may not always be the most relevant, affecting answer quality
+- Limited contextual understanding for vague queries
+  (e.g., “Explain the process” without specifying a policy area)
