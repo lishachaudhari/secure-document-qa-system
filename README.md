@@ -142,38 +142,9 @@ Overlapping chunks increase storage and latency. Policy documents are already cl
 | Summarized chunks                 | Risk of losing compliance-critical details                             |
 
 ---
-# Installation & Setup
 
-## 1. Clone the repository
-```bash
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
-```
-## 2. Install dependencies
-```bash
-pip install -r requirements.txt
-```
-## 3. Install Ingestion Documents file 
-```bash
-python ingest.py
-```
-## 4. Install Ollama
-Download from: https://ollama.com/download
-
-## 5. Pull the model
-```bash
-ollama pull mistral
-```
-## 6. Run the application
-```bash
-streamlit run app.py
-```
 # How It Works (End-to-End)
 <img width="2816" height="1536" alt="Workflow image" src="https://github.com/user-attachments/assets/2dbfd137-e731-4f96-9f80-a8c78a896708" />
-
-## Application UI (Example)
-
-Here is a sample screenshot of the Streamlit interface showing the upload area, query box, and answer display.
 
 # Limitations
 - Weak performance on complex multi-document reasoning
@@ -205,3 +176,28 @@ because no OCR pipeline is implemented.
   Retrieved chunks may not always be the most relevant, affecting answer quality
 - Limited contextual understanding for vague queries
   (e.g., “Explain the process” without specifying a policy area)
+
+  # Installation & Setup
+
+## 1. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+## 2. Install Ingestion Documents file 
+```bash
+python ingest.py
+```
+## 3. Install Ollama
+Download from: https://ollama.com/download
+
+## 4. Pull the model
+```bash
+ollama pull mistral
+```
+## 5. Run the application
+```bash
+streamlit run app.py
+```
+## Application UI (Example)
+
+Here is a sample screenshot of the Streamlit interface showing the upload area, query box, and answer display.
