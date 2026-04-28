@@ -29,12 +29,15 @@ This system solves that through:
 pip install -r requirements.txt
 ```
 ## 2. Install Ingestion Documents file 
-Before running this python file download documents and update path in the code for ingestion of documents.
+Before running the ingestion script, download or place your sample documents in a local folder.
+Then update the file path in ingest.py:
 ```bash
  ingester.ingest_documents(
         r"Enter the file path of Documents folder"
     )
 ```
+After updating the path, run:
+
 ```bash
 python ingest.py
 ```
