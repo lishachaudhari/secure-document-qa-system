@@ -20,7 +20,36 @@ This system solves that through:
 **No cloud, no external API calls. Fully on-device.**
 
 ---
+# Setup Instructions
 
+ # Installation & Setup
+
+## 1. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+## 2. Install Ingestion Documents file 
+```bash
+python ingest.py
+```
+## 3. Install Ollama
+Download from: https://ollama.com/download
+
+## 4. Pull the model
+```bash
+ollama pull mistral
+```
+## 5. Run the application
+```bash
+streamlit run app.py
+```
+## Application UI (Example)
+
+Here is a sample screenshot of the Streamlit interface showing the upload area, query box, and answer display.
+
+---
+
+# README — Design Decisions
 # Tech Stack
 
 - **Interface:** Streamlit  
@@ -176,28 +205,120 @@ because no OCR pipeline is implemented.
   Retrieved chunks may not always be the most relevant, affecting answer quality
 - Limited contextual understanding for vague queries
   (e.g., “Explain the process” without specifying a policy area)
+--- 
+# README — Learning Journal
 
-  # Installation & Setup
+## Day 1 — Starting Point
 
-## 1. Install dependencies
-```bash
-pip install -r requirements.txt
-```
-## 2. Install Ingestion Documents file 
-```bash
-python ingest.py
-```
-## 3. Install Ollama
-Download from: https://ollama.com/download
+I started with a clear idea of the final output, but I will be honest:
+I had never run a local LLM before and had never built a full RAG pipeline end-to-end. I only had theoretical understanding.
 
-## 4. Pull the model
-```bash
-ollama pull mistral
-```
-## 5. Run the application
-```bash
-streamlit run app.py
-```
-## Application UI (Example)
+I spent Day 1 breaking the problem into parts: ingestion → chunking → embeddings → retrieval → LLM response.
+Explored small and medium LLMs (Phi, LLaMA3, Mistral) to see which ones could realistically run on my laptop.
+Sketched the initial architecture and selected a simple embeddings + vector DB setup.
 
-Here is a sample screenshot of the Streamlit interface showing the upload area, query box, and answer display.
+---
+## Day 2 — Ingestion and Chunking Experiments
+
+I built the ingestion pipeline and quickly realized how tricky chunking actually is.
+
+What didn’t work:
+
+First attempt used very large chunks, causing irrelevant retrieval.
+Second attempt used very small chunks, losing context.
+Tried semantic/heading-based splitting, but it broke PDFs and tables badly.
+
+After several rounds of testing, I chose fixed-size chunking with small overlaps because it provided the most consistent results across document types.
+
+Reasoning:
+Consistency mattered more than being smart, especially with messy PDFs.
+
+---
+## Day 3 — Local LLM Setup & RAM Limitations
+
+I integrated Ollama today. This is where the biggest challenge appeared:
+
+RAM was not enough.
+
+I tried:
+
+LLaMA3 → system froze
+Mistral  → worked
+Running multiple tools at once → slowed everything
+Phi4-mini → poor reasoning
+
+I had to switch to a  Mistral model, close background apps, and optimize the process.
+This forced me to be more resource-aware.
+
+I also created a strict anti-hallucination prompt because initial responses included guesses when information wasn’t available.
+
+---
+## Day 4 — First End-to-End Test & Retrieval Tuning
+
+Ran the full pipeline end-to-end for the first time.
+Results were mixed:
+
+Some answers were incomplete
+Some answers pulled unrelated chunks
+Sometimes too many chunks were retrieved
+
+I tuned the similarity threshold, added filtering logic, and tested multiple combinations.
+
+Key decision:
+Increase relevance threshold to reduce noise.
+This resulted in clearer and more focused answers.
+
+---
+## Day 5 — Handling PDFs, Excel & Parsing Issues
+
+Now I focused on document formats.
+PDFs with tables produced broken text. Excel files pulled merged cells in strange ways.
+
+Things I tried that did not work:
+
+A PDF parser that reordered text randomly
+An Excel extractor that ignored formatting
+A naive table parser that created garbled output
+
+After testing alternatives, I selected a stable PDF parser and improved preprocessing for Excel files.
+Cleaned and normalized extracted text to make it reliable for embeddings.
+
+---
+## Day 6 — Edge Cases, Rejection Logic & Final Refinement
+
+Tested edge cases like:
+
+Questions not present in the document
+Ambiguous questions
+Very short or overly specific queries
+
+Earlier, the model guessed answers.
+I added rejection logic so the system cleanly responds with “Not found in the document” instead of hallucinating.
+
+Also refined the prompt again for consistency.
+After multiple document tests, responses became stable and predictable.
+
+---
+##  One Design Decision I Reversed
+
+Initially, I tried fixed-size chunking with overlap.
+However, it broke the natural structure of policy documents and reduced context quality.
+
+I switched to paragraph-level chunking, which preserved document structure and gave more meaningful and accurate retrieval results.
+
+---
+## Resources That Helped Me
+
+Throughout the 6 days, I used:
+
+- Ollama documentation
+- LangChain documentation (mainly for understanding chunking & embeddings concepts)
+- YouTube tutorials on RAG basics
+- StackOverflow for parsing issues
+- Blog posts on PDF extraction challenges
+- ChatGPT for debugging and code explanations
+- Google Code assistance for coding.
+
+These were essential since I did not know many of these topics on Day 1.
+
+ 
