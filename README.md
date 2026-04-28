@@ -39,7 +39,7 @@ When the user uploads documents, the system reads them, splits them into paragra
 
 ---
 
-# 💡 Design Decisions
+# Design Decisions
 
 ## Why This Architecture Meets NBFC Compliance
 - Ollama LLM runs fully offline, ensuring no policy or customer data leaves the device.
@@ -47,9 +47,9 @@ When the user uploads documents, the system reads them, splits them into paragra
 - Sentence Transformer embeddings run offline, with no API calls.
 - Streamlit UI does not transmit data externally, all operations occur inside local environment.
 ---
-## 🤖 LLM Selection
+## LLM Selection
 
-### ✅ Chosen Model: **Mistral (via Ollama)**
+### Chosen Model: **Mistral (via Ollama)**
 
 ### **Why this choice?**
 - Fully local execution (critical for financial compliance)
@@ -59,7 +59,7 @@ When the user uploads documents, the system reads them, splits them into paragra
 
 ---
 
-### 🔍 LLM Comparison
+### LLM Comparison
 
 | Model | Pros | Cons | Decision |
 |-------|------|------|----------|
@@ -70,9 +70,9 @@ When the user uploads documents, the system reads them, splits them into paragra
 
 ---
 
-## 🔎 Embedding Model
+## Embedding Model
 
-### ✅ Selected: **all-MiniLM-L6-v2**
+### Selected: **all-MiniLM-L6-v2**
 
 ### **Why?**
 - Fast CPU inference
@@ -82,7 +82,7 @@ When the user uploads documents, the system reads them, splits them into paragra
 
 ---
 
-### 🔍 Embedding Comparison
+### Embedding Comparison
 
 | Model | Pros | Cons | Decision |
 |--------|------|------|----------|
@@ -93,9 +93,9 @@ When the user uploads documents, the system reads them, splits them into paragra
 
 ---
 
-## 🗄️ Vector Database
+## Vector Database
 
-### ✅ Selected: **ChromaDB (Local)**
+### Selected: **ChromaDB (Local)**
 
 ### **Why?**
 - Fully local → meets strict NBFC privacy requirements
@@ -105,7 +105,7 @@ When the user uploads documents, the system reads them, splits them into paragra
 
 ---
 
-### 🔍 Vector DB Comparison
+### Vector DB Comparison
 
 | Database | Pros | Cons | Decision |
 |-----------|------|------|----------|
@@ -115,13 +115,13 @@ When the user uploads documents, the system reads them, splits them into paragra
 | **Pinecone** | Highly scalable | Cloud-based → violates data constraints | ❌ Rejected |
 
 ---
-## ✂️ Chunking Strategy Used
+## Chunking Strategy Used
 
-### ✅ Section-Based (Paragraph-Level) Chunking
+### Section-Based (Paragraph-Level) Chunking
 
 The system uses a **paragraph-level chunking approach**, where document text is split based on natural paragraph or section boundaries. Each paragraph is treated as an individual chunk, and very small or irrelevant sections are filtered out to ensure only meaningful content is stored. This results in clean, non-overlapping chunks that preserve the original structure of the document.
 
-### 🎯 Why This Approach
+### Why This Approach
 
 This strategy works well for policy and financial documents, which are typically structured into sections and paragraphs. By preserving this structure, each chunk retains enough context to answer queries effectively. It also improves retrieval accuracy while keeping the system lightweight and efficient, which is important for a fully local setup with limited computational resources.
 
@@ -130,6 +130,7 @@ Fixed-size chunks (200–500 tokens) were rejected because financial policy docu
 
 #### Why No Overlap?
 Overlapping chunks increase storage and latency. Policy documents are already cleanly structured, so paragraph-level boundaries provide enough context without overlap.
+
 ---
 ### Retrieval Alternatives Considered
 | Approach                          | Why Not Used                                                           |
@@ -141,7 +142,7 @@ Overlapping chunks increase storage and latency. Policy documents are already cl
 | Summarized chunks                 | Risk of losing compliance-critical details                             |
 
 ---
-# 🚀 Installation & Setup
+# Installation & Setup
 
 ## 1. Clone the repository
 ```bash
@@ -152,21 +153,25 @@ cd <repo-name>
 ```bash
 pip install -r requirements.txt
 ```
-## 3. Install Ollama
+## 3. Install Ingestion Documents file 
+```bash
+python ingest.py
+```
+## 4. Install Ollama
 Download from: https://ollama.com/download
 
-## 4. Pull the model
+## 5. Pull the model
 ```bash
 ollama pull mistral
 ```
-## 5. Run the application
+## 6. Run the application
 ```bash
 streamlit run app.py
 ```
 # How It Works (End-to-End)
 <img width="2816" height="1536" alt="Workflow image" src="https://github.com/user-attachments/assets/2dbfd137-e731-4f96-9f80-a8c78a896708" />
 
-## 🖥️ Application UI (Example)
+## Application UI (Example)
 
 Here is a sample screenshot of the Streamlit interface showing the upload area, query box, and answer display.
 
@@ -180,7 +185,7 @@ Here is a sample screenshot of the Streamlit interface showing the upload area, 
 - Fails on scanned/image-based PDFs
 because no OCR pipeline is implemented.
 
-# ✅ What Works Well
+# What Works Well
 - Accurate for section-specific and definition-based queries
   (e.g., “What are KYC requirements?” or “What is the loan approval limit?”)
 - Strong hallucination control
