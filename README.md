@@ -46,6 +46,20 @@ streamlit run app.py
 ## Application UI (Example)
 
 Here is a sample screenshot of the Streamlit interface showing the upload area, query box, and answer display.
+<img width="1919" height="983" alt="image" src="https://github.com/user-attachments/assets/ee48a5f5-d8fd-46a6-a6d0-5f45cc945e5d" />
+### Without uploading Documents 
+1. Click Ingest to process them
+2. After ingestion completes, enter your query
+3. Click Ask
+   
+<img width="381" height="699" alt="image (1)" src="https://github.com/user-attachments/assets/e8b7b898-52fb-49a1-a5d2-2e1a57836c48" />
+<img width="401" height="715" alt="image (2)" src="https://github.com/user-attachments/assets/a83dd944-c75b-4a73-9c3e-87596cc26bdc" />
+
+### With uploading Documents
+1. Upload documents (not ingested yet)
+2. Click Ingest to process them
+3. After ingestion completes, enter your query
+4. Click Ask
 
 ---
 
