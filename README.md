@@ -153,11 +153,57 @@ ollama pull mistral
 ```bash
 streamlit run app.py
 ```
-# 📂 Folder Structure
-.
-├── app.py
-├── ingest.py
-├── query.py
-├── sample_docs/
-├── chroma_db/
-└── README.md
+# How It Works (End-to-End)
+
+# Limitations
+- Weak performance on complex multi-document reasoning
+- No reranking model
+- Limited handling of unstructured PDFs
+- UI does not highlight exact answer spans
+# Future Improvements
+Semantic chunking
+
+📘 Learning Journal (7-Day Journey)
+Day 1
+
+Understood the problem, designed architecture, explored LLMs (Phi, LLaMA3, Mistral), selected embeddings and vector DB.
+
+Day 2
+
+Built ingestion pipeline, tested chunking strategies, improved chunk quality.
+
+Day 3
+
+Integrated LLM using Ollama, handled RAM constraints, designed strict anti-hallucination prompt.
+
+Day 4
+
+Tested system end-to-end, fixed incomplete answers, improved retrieval & filtering.
+
+Day 5
+
+Added Excel & PDF improvements, tested across various document types.
+
+Day 6
+
+Handled edge cases, added rejection logic, improved reliability and consistency.
+
+🔧 Key Challenges
+Chunk quality → improved filtering
+RAM limitations → optimized model choice
+Hallucination → strict prompting + rejection logic
+Retrieval accuracy → distance thresholds + filtering
+🔁 One Decision Reversed
+
+Initially: Used basic chunking → resulted in poor quality retrieval
+Revised: Switched to filtered, section-based chunking → major accuracy improvement
+
+✅ What Works Well
+Accurate policy-based answers
+Strong hallucination control
+Fully local system (NBFC-compliant)
+Clean and intuitive UI
+⚠️ What Doesn’t Work Well
+Complex multi-document reasoning
+Weak handling of unstructured PDFs
+No reranking to boost retrieval precision
