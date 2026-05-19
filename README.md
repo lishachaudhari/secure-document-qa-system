@@ -51,7 +51,7 @@ ollama pull mistral
 ```
 ## 5. Run the application
 ```bash
-streamlit run app.py
+python -m streamlit run app.py
 ```
 ## Application UI (Example)
 
